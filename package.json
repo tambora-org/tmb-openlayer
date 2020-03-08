@@ -2,40 +2,27 @@
   "name": "tmb-openlayer",
   "version": "1.0.0",
   "description": "Openlayer extension handling tambora",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "src/index.js",
   "scripts": {
-    "test": "jest --config jestconfig.json",
-    "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json",
-    "prepare" : "npm run build",
-    "prepublishOnly" : "npm test && npm run lint",
-    "preversion" : "npm run lint",
-    "version" : "npm run format && git add -A src",
-    "postversion" : "git push && git push --tags"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tambora-org/tmb-openlayer.git"
   },
-  "keywords": ["tambora","openlayer"],
+  "keywords": [
+    "tambora",
+    "openlayer"
+  ],
   "author": "Michael Kahle",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/tambora-org/tmb-openlayer/issues"
   },
   "homepage": "https://github.com/tambora-org/tmb-openlayer#readme",
-  "devDependencies": {
-    "@types/jest": "^25.1.4",
-    "jest": "^25.1.0",
-    "prettier": "^1.19.1",
-    "ts-jest": "^25.2.1",
-    "tslint": "^6.0.0",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.8.3"
-  },
-  "files": [
-    "lib/**/*"
-  ]
+  "dependencies": {
+    "axios": "^0.19.2",
+    "ol": "^6.2.1",
+    "openlayers-ext": "^3.1.5"
+  }
 }
