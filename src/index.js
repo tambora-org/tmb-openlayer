@@ -1,8 +1,19 @@
 
 class TamboraMarkerLayer extends ol.layer.Vector {
    constructor(options) {
+     options.name = "tambora.org";
+     options.renderOrder = ol.ordering.yOrdering();
 	   super(options);
        // this.year = options.year;
+     this.vectorSource = new ol.source.Vector({
+      url: "https://www.tambora.org/index.php/grouping/event/geojson?limit=5000&t[yb]=1540&t[ye]=1540&g[nd]=90,590,591,87,819,571&g[va]=86,82,6,104,101,41,48,142,57,134,124,125,123",
+      projection: 'EPSG:3857',
+      format: new ol.format.GeoJSON(),
+      attributions: [ "&copy; <a href='https://www.tambora.org'>tambora.org</a>" ],
+      //logo:"https://www.data.gouv.fr/s/avatars/37/e56718abd4465985ddde68b33be1ef.jpg" 
+    });
+    this.setSource(this.vectorSource);
+    this.setStyle(getStyle);
    }
 }   
 

@@ -43,27 +43,11 @@ markerLayer = new ol.layer.Vector({ source: new ol.source.Vector({ features: [],
 //https://openlayers.org/en/latest/examples/cluster.html
 //https://harrywood.co.uk/maps/examples/openlayers/marker-popups.view.html
 
+var tmbMarker = new TamboraMarkerLayer({ 
 
- // GeoJSON layer
-  var vectorSource = new ol.source.Vector({
-    //url: 'https://viglino.github.io/ol-ext/examples/data/fond_guerre.geojson',
-	url: "https://www.tambora.org/index.php/grouping/event/geojson?limit=5000&t[yb]=1540&t[ye]=1540&g[nd]=90,590,591,87,819,571&g[va]=86,82,6,104,101,41,48,142,57,134,124,125,123",
-    projection: 'EPSG:3857',
-    format: new ol.format.GeoJSON(),
-    attributions: [ "&copy; <a href='https://data.culture.gouv.fr/explore/dataset/fonds-de-la-guerre-14-18-extrait-de-la-base-memoire'>data.culture.gouv.fr</a>" ],
-    logo:"https://www.data.gouv.fr/s/avatars/37/e56718abd4465985ddde68b33be1ef.jpg" 
-  });
-
-  var vector = new TamboraMarkerLayer({ // ol.layer.Vector({
-    name: '1914-18',
-    preview: "http://www.culture.gouv.fr/Wave/image/memoire/2445/sap40_z0004141_v.jpg",
-    source: vectorSource,
-    // y ordering
-    renderOrder: ol.ordering.yOrdering(),
-    style: getStyle
   })
 
-  map.addLayer(vector);
+map.addLayer(tmbMarker);
 
 
 
