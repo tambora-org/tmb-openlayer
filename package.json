@@ -1,6 +1,6 @@
 {
   "name": "tambora-openlayer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Openlayer extension handling tambora data",
   "main": "dist/tambora-openlayer.js",
   "scripts": {
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/tambora-org/tmb-openlayer#readme",
   "dependencies": {
+    "font-awesome": "^4.7.0",
     "ol": ">=5.0.0",
     "ol-layerswitcher": ">=3.0.0",
     "openlayers-ext": ">=3.1.5"
