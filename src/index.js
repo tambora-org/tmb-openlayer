@@ -63,6 +63,7 @@ class TamboraMarkerLayer extends ol.layer.Vector {
     map.addLayer(this);
     this.changed();
 
+    // uncluster on zoom
     map.getView().on('change:resolution', function(evt){
       var view = evt.target;
       this.getLayers().getArray().map(function(layer) {
@@ -77,6 +78,61 @@ class TamboraMarkerLayer extends ol.layer.Vector {
         }
       });
     }, map);
+
+    // popup
+    var container = document.getElementById('popup');
+    var content = document.getElementById('popup-content');
+    var closer = document.getElementById('popup-closer');
+   
+    var overlay = new ol.Overlay({
+        element: container,
+        autoPan: true,
+        autoPanAnimation: {
+            duration: 250
+        }
+    });
+    map.addOverlay(overlay);
+   
+    closer.onclick = function() {
+        overlay.setPosition(undefined);
+        closer.blur();
+        return false;
+    };
+
+    map.on('singleclick', function (event) {
+      if (map.hasFeatureAtPixel(event.pixel) === true) {
+        var features = map.getFeaturesAtPixel(event.pixel, 
+            {layerFilter: function(layer) { return (layer instanceof TamboraMarkerLayer); } })
+          var coordinate = event.coordinate;
+          
+          for(var i=0;i<features.length;i++) {
+            // maybe first collect real markers...
+            var feature = features[i];
+            var event = feature.getProperties();
+            if (event.features) {
+              // cluster
+              overlay.setPosition(undefined);
+              closer.blur();  
+              // then zoom in
+              var view = map.getView();
+              var zoom = view.getZoom();
+              if(zoom < 12) {
+                view.setCenter(coordinate);
+                view.setZoom(zoom + 2);
+              }           
+            } else {
+              // marker
+              var popup = getPopup(feature);
+              content.innerHTML = popup;
+              overlay.setPosition(coordinate);
+            }
+          }  
+      } else {
+          overlay.setPosition(undefined);
+          closer.blur();
+      }
+  });
+
 
    }
   
@@ -120,24 +176,59 @@ class TamboraMarkerLayer extends ol.layer.Vector {
 
 
 var iconCodes = {
+
+  "flood intensity:flood above average": {icon: 'fa-ship', markerColor: 'blue', iconColor: '#FFFFFF', shape: 'circle', prefix: 'icon'},
+  "flood extent:regional": {icon: 'fa-ship', markerColor: 'blue', iconColor: '#FFFFFF', shape: 'shield', prefix: 'icon'},
+  "freezing temperatures:null": {icon: 'fa-linux', markerColor: 'white', iconColor: '#0000FF', shape: 'circle', prefix: 'fa'},
+  "shortterm precipitation:very much precipitation": {icon: 'fa-tint', markerColor: 'blue', iconColor: '#FFFFFF', shape: 'circle', prefix: 'icon'},
+  "shortterm precipitation:much precipitation": {icon: 'fa-tint', markerColor: 'blue', iconColor: '#AAAAAA', shape: 'circle', prefix: 'icon'},
+  "rain:null": {icon: 'tint', markerColor: 'cyan', iconColor: '#0000AA', shape: 'shield', prefix: 'icon'},
+  "temperature level:cold": {icon: 'fa-sun-o', markerColor: 'cyan', iconColor: '#0000CC', shape: 'circle', prefix: 'icon'},
+  "temperature level:cool": {icon: 'fa-sun-o', markerColor: 'cyan', iconColor: '#0000AA', shape: 'circle', prefix: 'icon'},
+  "temperature level:warm": {icon: 'fa-sun-o', markerColor: 'yellow', iconColor: '#880000', shape: 'circle', prefix: 'icon'},
+  "temperature level:hot": {icon: 'fa-sun-o', markerColor: 'yellow', iconColor: '#990000', shape: 'circle', prefix: 'icon'},
+  "price:null": {icon: 'fa-euro', markerColor: 'violet', iconColor: '#000000', shape: 'shield', prefix: 'icon'}, //x
+  "begin:null": {icon: 'fa-arrow-circle-o-left', markerColor: 'white', iconColor: '#00AA00', shape: 'square', prefix: 'fa'}, //x
+  "end:null": {icon: 'fa-arrow-circle-o-right', markerColor: 'white', iconColor: '#00AA00', shape: 'square', prefix: 'icon'}, //x
+  "wind force:10 bft: storm": {icon: 'fa-skyatlas', markerColor: 'pink', iconColor: '#000000', shape: 'coma', prefix: 'fa'}, //x
+  "wind force:9 bft: strong gale": {icon: 'fa-skyatlas', markerColor: 'pink', iconColor: '#111111', shape: 'coma', prefix: 'fa'}, //x
+  "wind force:7 bft: high wind": {icon: 'fa-skyatlas', markerColor: 'pink', iconColor: '#333333', shape: 'coma', prefix: 'fa'}, //x
+  "longterm precipitation:very wet": {icon: 'fa-tint', markerColor: 'cyan', iconColor: '#FFFFFF', shape: 'circle', prefix: 'icon'},	
+  "kind of goods:null": {icon: 'fa-shopping-cart', markerColor: 'violet', iconColor: '#000000', shape: 'shield', prefix: 'icon'}, //-
+  "harvest quality:poor crop quality": {icon: 'fa-leaf', markerColor: 'green', iconColor: '#DDAAAA', shape: 'shield', prefix: 'icon'}, //-
+  "harvest quality:good crop quality": {icon: 'fa-leaf', markerColor: 'green', iconColor: '#AADDAA', shape: 'shield', prefix: 'icon'}, //-
+  "harvest quantity:high harvest volume": {icon: 'fa-leaf', markerColor: 'green', iconColor: '#669966', shape: 'shield', prefix: 'icon'}, //!--
+  "harvest quantity:low harvest volume": {icon: 'fa-leaf', markerColor: 'green', iconColor: '#AADDAA', shape: 'shield', prefix: 'icon'}, //-
+  "oat:null": {icon: 'fa-pagelines', markerColor: 'violet', iconColor: '#000000', shape: 'shield', prefix: 'fa'}, 
+  "rye:null": {icon: 'fa-pagelines', markerColor: 'violet', iconColor: '#000000', shape: 'shield', prefix: 'fa'}, 
+  "grain:null": {icon: 'fa-pagelines', markerColor: 'violet', iconColor: '#000000', shape: 'shield', prefix: 'fa'}, 
+  "fruits:null": {icon: 'fa-lemon-o', markerColor: 'violet', iconColor: '#000000', shape: 'shield', prefix: 'icon'}, 
+  "plants:null": {icon: 'fa-leaf', markerColor: 'violet', iconColor: '#000000', shape: 'shield', prefix: 'icon'}, 
+  "snow:null": {icon: 'fa-empire', markerColor: 'white', iconColor: '#0000AA', shape: 'shield', prefix: 'fa'}, //-
+  "wine:null": {icon: 'fa-glass', markerColor: 'violet', iconColor: '#220000', shape: 'shield', prefix: 'fa'}, 
+  "thunderstorm:null": {icon: 'fa-flash', markerColor: 'cyan', iconColor: '#0000AA', shape: 'shield', prefix: 'fa'}, //-
+  "general plant development:null": {icon: 'fa-leaf', markerColor: 'violet', iconColor: '#000000', shape: 'shield', prefix: 'icon'}, //!-
+  "harvest:null": {icon: 'fa-leaf', markerColor: 'green', iconColor: '#000000', shape: 'shield', prefix: 'icon'}, //!--
+  "solar eclipse:null": {icon: 'fa-sun-o', markerColor: 'white', iconColor: '#AA3300', shape: 'circle', prefix: 'fa'}, //-
+
 "longterm precipitation:extremely dry": {icon: 'fa-tint', markerColor: 'red', iconColor: '#FFFFFF', shape: 'marker', prefix: 'icon'},
 "longterm precipitation:very dry": {icon: 'fa-tint', markerColor: 'orange', iconColor: '#FFFFFF', shape: 'marker', prefix: 'icon'},	
 "wildfire:null": {icon: 'fa-fire', markerColor: 'yellow', iconColor: '#FF0000', shape: 'marker', prefix: 'icon'},
 "damaged by fire:null": {icon: 'fa-fire', markerColor: 'yellow', iconColor: '#AA0000', shape: 'marker', prefix: 'icon'},
-"temperature level:very hot": {icon: 'fa-sun', markerColor: 'yellow', iconColor: '#AA0000', shape: 'marker', prefix: 'icon'},
-"water temperature level:very hot": {icon: 'fa-sun', markerColor: 'yellow', iconColor: '#CC0000', shape: 'marker', prefix: 'icon'},
-"price trend:increasing price": {icon: 'euro sign', markerColor: 'violet', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
-"price level:high price": {icon: 'euro sign', markerColor: 'violet', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
+"temperature level:very hot": {icon: 'fa-sun-o', markerColor: 'yellow', iconColor: '#AA0000', shape: 'marker', prefix: 'icon'},
+"water temperature level:very hot": {icon: 'fa-sun-o', markerColor: 'yellow', iconColor: '#CC0000', shape: 'marker', prefix: 'icon'},
+"price trend:increasing price": {icon: 'fa-euro', markerColor: 'violet', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
+"price level:high price": {icon: 'fa-euro', markerColor: 'violet', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
 "water level trend:falling water level": {icon: 'fa-ship', markerColor: 'white', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
 "low water level:low water level (no water)": {icon: 'fa-ship', markerColor: 'blue', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
 "hunger (humans):null": {icon: 'fa-coffee', markerColor: 'purple', iconColor: '#FFFFFF', shape: 'marker', prefix: 'icon'},
-"harvest quality:very good crop quality": {icon: 'fa-leaf', markerColor: 'green-light', iconColor: '#BBFFBB', shape: 'marker', prefix: 'icon'},
-"harvest quantity:very low harvest volume": {icon: 'fa-leaf', markerColor: 'green-light', iconColor: '#BBFFBB', shape: 'marker', prefix: 'icon'},
+"harvest quality:very good crop quality": {icon: 'fa-leaf', markerColor: 'green', iconColor: '#BBFFBB', shape: 'marker', prefix: 'icon'},
+"harvest quantity:very low harvest volume": {icon: 'fa-leaf', markerColor: 'green', iconColor: '#BBFFBB', shape: 'marker', prefix: 'icon'},
 "shortterm precipitation:no precipitation": {icon: 'fa-tint', markerColor: 'cyan', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
 "low water level:low water level (severly limited use)": {icon: 'fa-ship', markerColor: 'blue', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
 "thirst (animals):null": {icon: 'fa-beer', markerColor: 'cyan', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
 "hunger (animals):null": {icon: 'fa-star', markerColor: 'purple', iconColor: '#FFFFFF', shape: 'marker', prefix: 'icon'},
-"low water level:low water level (limited use)": {icon: 'ship', markerColor: 'blue', iconColor: '#000000', shape: 'circle', prefix: 'icon'},
+"low water level:low water level (limited use)": {icon: 'fa-ship', markerColor: 'blue', iconColor: '#000000', shape: 'circle', prefix: 'icon'},
 "thirst (humans):null": {icon: 'fa-beer', markerColor: 'cyan', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
 "precipitation frequency:never precipitation": {icon: 'umbrella', markerColor: 'cyan', iconColor: '#000000', shape: 'marker', prefix: 'icon'},
 "other:other": {icon: 'fa-question', markerColor: 'white', iconColor: '#000000', shape: 'circle', prefix: 'icon'},
@@ -204,10 +295,10 @@ function getMarker(feature) {
           offsetY: 0,
           color: data.iconColor,
           fill: new ol.style.Fill({
-            color: 'navy' //markerColor
+            color: data.markerColor //'navy' //
           }),
           stroke: new ol.style.Stroke({
-            color: 'white',
+            color: data.markerColor, // 'white',
             width: 2
           })
         }),
@@ -224,4 +315,34 @@ function getMarker(feature) {
     iconCodes[key].marker.setText(text);
   }
   return iconCodes[key].marker;
+}
+
+
+function getPopup(feature) {
+  var property =  feature.getProperties();
+
+  var quote = property.quote_text;
+  if(quote.length > 512) {
+     quote = quote.substr(0,500) + '   [ ... '+(quote.length-500).toString()+' more characters]';
+  }	  
+  var popup = '<img src="https://www.tambora.org/images/logos/tambora-logo-red.png" alt="tambora.org" align="right" />'  
+              + '<b>Node:</b> ' + property.node_label  
+              + '<br/><b>Value:</b> ' + property.value_label 
+              + '<hr style="margin:1px;"/><b>Quote:</b> ' + quote;
+  if(property.public) {			  
+    popup += '<hr style="margin:1px;"/><b>Source:</b> ' 
+            + property.source_author /* + '('+'yyyy'+'): ' */		  
+		  	    + ': ' + property.source_title
+				    + '<hr style="margin:1px;"/>'
+	}
+	
+	if(property.doi) {
+      popup += '<b>DOI:</b> <a target="_blank" href="https://dx.doi.org/' + property.doi + '">'
+			+ property.doi + '</a><br/>';
+	}
+	if(property.public) {
+	  popup += '<b>More details on:</b> <a target="_blank" href="https://www.tambora.org/index.php/grouping/event/list?g[qid]=' 
+			    + property.quote_id.toString() + '" >tambora.org</a>';
+  }
+  return popup;	
 }
