@@ -109,6 +109,11 @@ class TamboraMarkerLayer extends ol.layer.Vector {
             // maybe first collect real markers...
             var feature = features[i];
             var event = feature.getProperties();
+            //only one marker in cluster?
+            if (event.features && event.features.length == 1) {
+              feature = event.features[0];
+              event = feature.getProperties();
+            }  
             if (event.features) {
               // cluster
               overlay.setPosition(undefined);
