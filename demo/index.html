@@ -3,31 +3,152 @@
 <head> 
   <meta charset="utf-8">
   <title>Tambora Demo</title>
-  <link href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" type="text/css" rel="stylesheet"/>
-  <link href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css"  type="text/css" rel="stylesheet" />
-  <link href="//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css"  type="text/css" rel="stylesheet" />
-  <link href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/icon.min.css"  type="text/css" rel="stylesheet" />
-  <link href="//cdn.jsdelivr.net/npm/leaflet-extra-markers@1.1.0/dist/css/leaflet.extra-markers.min.css"  type="text/css" rel="stylesheet" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.css" type="text/css" rel="stylesheet" />
+  <link href="//viglino.github.io/ol-ext/dist/ol-ext.css"  type="text/css" rel="stylesheet" />
 </head>
 
 <body>
 
-
-<div id="map"></div>
+  <div id="map"></div>
+  <div id="popup" class="ol-popup">
+    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+    <div id="popup-content"></div>
+</div>
 
 <style>
-#map{ width: 100%; height: 600px; }
+ #map{ width: 90%; height: 600px; }
 </style>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js" type="text/javascript"></script>
-<script src='//cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js' type="text/javascript"></script>
-<script src='//cdn.jsdelivr.net/npm/leaflet-extra-markers@1.1.0/dist/js/leaflet.extra-markers.min.js' type="text/javascript"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.js" type="text/javascript"></script>
+<!--script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL,Object.assign"></script-->
+<script src="//viglino.github.io/ol-ext/dist/ol-ext.js" type="text/javascript"></script>
+<script src="//viglino.github.io/ol-ext/dist/extra/FontAwesomeDef.js" type="text/javascript"></script>
  
-<script src='../src/index.js'></script>
+<script src='../dist/tambora-openlayer.js'></script>
 <script>
-    var map = L.map('map');
-    L.TamboraMarkerLayer().addTo(map);
+
+//ol.style.FontSymbol.prototype.defs.fonts.FontAwesome.font = "Font Awesome 5 Free";
+
+var baseMapLayer = new ol.layer.Tile({
+  source: new ol.source.OSM()
+});
+var map = new ol.Map({
+  target: 'map',
+  layers: [ baseMapLayer],
+  controls: ol.control.defaults({
+      attributionOptions: {
+        collapsible: false
+      }
+    }),
+  view: new ol.View({
+          center: ol.proj.fromLonLat([8,48]), 
+          zoom: 9 //Initial Zoom Level
+        })
+});
+
+
+var tmbMarker = new TamboraMarkerLayer({ 
+   //url: "https://www.tambora.org/index.php/grouping/event/geojson?limit=5000&t[yb]=1540&t[ye]=1540&g[nd]=90,590,591,87,819,571&g[va]=86,82,6,104,101,41,48,142,57,134,124,125,123",
+   parameter: "limit=5000&t[yb]=1540&t[ye]=1540&g[nd]=90,590,591,87,819,571&g[va]=86,82,6,104,101,41,48,142,57,134,124,125,123",
+   grouping: 15,
+   clusterZoomLimit: 12
+  })
+
+  tmbMarker.addTo(map);
 </script>
+
+<style>
+  .options i.standard,
+  .options .fa {
+    height: 1em;
+    margin: 0;
+    padding: 0.5em;
+    width: 1em;
+    cursor:pointer;
+  }
+  .options i.standard,
+  .options .fa:before {
+    margin:0;
+    border: 1px solid transparent;
+    display:inline-block;
+    height: 1em;
+    width: 1em;
+    text-align:center;
+    padding:2px;
+  }
+  .options i.standard {
+    font-style: normal;
+    font-weight: bold;
+    font-family: sherif;
+    padding-bottom:0.1em;
+    line-height:0.9em;
+    margin-left: 0.35em;
+  }
+  .options i.standard:hover,
+  .options .fa:hover:before {
+    border: 1px solid #369;
+    border-radius: 100%;
+    transform: scale(3);
+    -webkit-transform: scale(3);
+    background:#fff;
+  }
+  
+
+.ol-popup {
+            font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif !important;
+            font-size: 12px;
+            position: absolute;
+            background-color: white;
+            -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+            filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #cccccc;
+            bottom: 12px;
+            left: -50px;
+            min-width: 250px;
+            max-width: 5000px;
+            width: 20%;
+        }
+
+        .ol-popup:after,
+        .ol-popup:before {
+            top: 100%;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .ol-popup:after {
+            border-top-color: white;
+            border-width: 10px;
+            left: 48px;
+            margin-left: -10px;
+        }
+
+        .ol-popup:before {
+            border-top-color: #cccccc;
+            border-width: 11px;
+            left: 48px;
+            margin-left: -11px;
+        }
+
+        .ol-popup-closer {
+            text-decoration: none;
+            position: absolute;
+            top: 2px;
+            right: 8px;
+        }
+
+        .ol-popup-closer:after {
+            content: "✖";
+            color: #c3c3c3;
+        }
+</style>
 
 </body>
 </html>

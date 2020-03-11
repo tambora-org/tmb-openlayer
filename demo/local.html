@@ -3,19 +3,12 @@
 <head> 
   <meta charset="utf-8">
   <title>Tambora Demo</title>
-  <!--link href="https:////cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/icon.min.css"  type="text/css" rel="stylesheet" /-->
-  <!--link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"  type="text/css" rel="stylesheet" /-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.css" type="text/css" rel="stylesheet" />
   <link href="https://viglino.github.io/ol-ext/dist/ol-ext.css"  type="text/css" rel="stylesheet" />
-
- 
 </head>
 
 <body>
-
-
-  <i class="far fa-circle"></i>
 
   <div id="map"></div>
   <div id="popup" class="ol-popup">
@@ -24,7 +17,83 @@
 </div>
 
 <style>
-#map{ width: 90%; height: 600px; }
+ #map{ width: 90%; height: 600px; }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.js" type="text/javascript"></script>
+<!--script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL,Object.assign"></script-->
+<script src="https://viglino.github.io/ol-ext/dist/ol-ext.js" type="text/javascript"></script>
+<script src="https://viglino.github.io/ol-ext/dist/extra/FontAwesomeDef.js" type="text/javascript"></script>
+ 
+<script src='../dist/tambora-openlayer.js'></script>
+<script>
+
+//ol.style.FontSymbol.prototype.defs.fonts.FontAwesome.font = "Font Awesome 5 Free";
+
+var baseMapLayer = new ol.layer.Tile({
+  source: new ol.source.OSM()
+});
+var map = new ol.Map({
+  target: 'map',
+  layers: [ baseMapLayer],
+  controls: ol.control.defaults({
+      attributionOptions: {
+        collapsible: false
+      }
+    }),
+  view: new ol.View({
+          center: ol.proj.fromLonLat([8,48]), 
+          zoom: 9 //Initial Zoom Level
+        })
+});
+
+
+var tmbMarker = new TamboraMarkerLayer({ 
+   //url: "https://www.tambora.org/index.php/grouping/event/geojson?limit=5000&t[yb]=1540&t[ye]=1540&g[nd]=90,590,591,87,819,571&g[va]=86,82,6,104,101,41,48,142,57,134,124,125,123",
+   parameter: "limit=5000&t[yb]=1540&t[ye]=1540&g[nd]=90,590,591,87,819,571&g[va]=86,82,6,104,101,41,48,142,57,134,124,125,123",
+   grouping: 15,
+   clusterZoomLimit: 12
+  })
+
+  tmbMarker.addTo(map);
+</script>
+
+<style>
+  .options i.standard,
+  .options .fa {
+    height: 1em;
+    margin: 0;
+    padding: 0.5em;
+    width: 1em;
+    cursor:pointer;
+  }
+  .options i.standard,
+  .options .fa:before {
+    margin:0;
+    border: 1px solid transparent;
+    display:inline-block;
+    height: 1em;
+    width: 1em;
+    text-align:center;
+    padding:2px;
+  }
+  .options i.standard {
+    font-style: normal;
+    font-weight: bold;
+    font-family: sherif;
+    padding-bottom:0.1em;
+    line-height:0.9em;
+    margin-left: 0.35em;
+  }
+  .options i.standard:hover,
+  .options .fa:hover:before {
+    border: 1px solid #369;
+    border-radius: 100%;
+    transform: scale(3);
+    -webkit-transform: scale(3);
+    background:#fff;
+  }
+  
 
 .ol-popup {
             font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif !important;
@@ -79,93 +148,6 @@
             content: "✖";
             color: #c3c3c3;
         }
-
-</style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.js" type="text/javascript"></script>
-<!--script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/fontawesome.min.js" type="text/javascript"></script-->
-<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL,Object.assign"></script>
-<script src="https://viglino.github.io/ol-ext/dist/ol-ext.js" type="text/javascript"></script>
-<script src="https://viglino.github.io/ol-ext/dist/extra/FontAwesomeDef.js" type="text/javascript"></script>
- 
-<script src='../src/index.js'></script>
-<script>
-
-ol.style.FontSymbol.prototype.defs.fonts.FontAwesome.font = "Font Awesome 5 Free";
-
-var baseMapLayer = new ol.layer.Tile({
-  source: new ol.source.OSM()
-});
-var map = new ol.Map({
-  target: 'map',
-  layers: [ baseMapLayer],
-  controls: ol.control.defaults({
-      attributionOptions: {
-        collapsible: false
-      }
-    }),
-  view: new ol.View({
-          center: ol.proj.fromLonLat([8,48]), 
-          zoom: 9 //Initial Zoom Level
-        })
-});
-
-//https://stackoverflow.com/questions/45677820/openlayers-markers-with-popup
-//view-source:https://viglino.github.io/ol-ext/examples/style/map.style.font.html
-
-
-//https://openlayers.org/en/latest/examples/cluster.html
-//https://harrywood.co.uk/maps/examples/openlayers/marker-popups.view.html
-
-var tmbMarker = new TamboraMarkerLayer({ 
-   //url: "https://www.tambora.org/index.php/grouping/event/geojson?limit=5000&t[yb]=1540&t[ye]=1540&g[nd]=90,590,591,87,819,571&g[va]=86,82,6,104,101,41,48,142,57,134,124,125,123",
-   parameter: "limit=5000&t[yb]=1540&t[ye]=1540&g[nd]=90,590,591,87,819,571&g[va]=86,82,6,104,101,41,48,142,57,134,124,125,123",
-   grouping: 15,
-   clusterZoomLimit: 12
-  })
-
-//map.addLayer(tmbMarker);
-tmbMarker.addTo(map);
-
-
-</script>
-
-<style>
-  .options i.standard,
-  .options .fa {
-    height: 1em;
-    margin: 0;
-    padding: 0.5em;
-    width: 1em;
-    cursor:pointer;
-  }
-  .options i.standard,
-  .options .fa:before {
-    margin:0;
-    border: 1px solid transparent;
-    display:inline-block;
-    height: 1em;
-    width: 1em;
-    text-align:center;
-    padding:2px;
-  }
-  .options i.standard {
-    font-style: normal;
-    font-weight: bold;
-    font-family: sherif;
-    padding-bottom:0.1em;
-    line-height:0.9em;
-    margin-left: 0.35em;
-  }
-  .options i.standard:hover,
-  .options .fa:hover:before {
-    border: 1px solid #369;
-    border-radius: 100%;
-    transform: scale(3);
-    -webkit-transform: scale(3);
-    background:#fff;
-  }
-  
 </style>
 
 </body>

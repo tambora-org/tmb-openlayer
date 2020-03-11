@@ -1,8 +1,8 @@
 {
-  "name": "tmb-openlayer",
-  "version": "1.0.0",
-  "description": "Openlayer extension handling tambora",
-  "main": "src/index.js",
+  "name": "tambora-openlayer",
+  "version": "0.0.1",
+  "description": "Openlayer extension handling tambora data",
+  "main": "dist/tambora-openlayer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/tambora-org/tmb-openlayer#readme",
   "dependencies": {
-    "axios": ">=0.19.2",
     "ol": ">=5.0.0",
     "ol-layerswitcher": ">=3.0.0",
     "openlayers-ext": ">=3.1.5"
