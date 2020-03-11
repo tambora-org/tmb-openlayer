@@ -329,7 +329,11 @@ function getPopup(feature) {
   var quote = property.quote_text;
   if(quote.length > 512) {
      quote = quote.substr(0,500) + '   [ ... '+(quote.length-500).toString()+' more characters]';
-  }	  
+  }	
+  var srcTitle = property.source_title;
+  if(srcTitle.length > 312) {
+     srcTitle = srcTitle.substr(0,300) + '   [ ... '+(srcTitle.length-300).toString()+' more characters]';
+  }    
   var popup = '<img src="https://www.tambora.org/images/logos/tambora-logo-red.png" alt="tambora.org" align="right" />'  
               + '<b>Node:</b> ' + property.node_label  
               + '<br/><b>Value:</b> ' + property.value_label 
@@ -337,7 +341,7 @@ function getPopup(feature) {
   if(property.public) {			  
     popup += '<hr style="margin:1px;"/><b>Source:</b> ' 
             + property.source_author /* + '('+'yyyy'+'): ' */		  
-		  	    + ': ' + property.source_title
+		  	    + ': ' + srcTitle
 				    + '<hr style="margin:1px;"/>'
 	}
 	
