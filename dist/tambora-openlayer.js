@@ -66,7 +66,7 @@ class TamboraMarkerLayer extends ol.layer.Vector {
     // uncluster on zoom
     map.getView().on('change:resolution', function(evt){
       var view = evt.target;
-      this.getLayers().getArray().map(function(layer) {
+      map.getLayers().getArray().map(function(layer) {
         if(layer.srcClustered && layer.srcUnclustered) {
           var oldSource = layer.getSource();
           if (view.getZoom() >= layer.clusterZoomLimit && oldSource instanceof ol.source.Cluster) {
